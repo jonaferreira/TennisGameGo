@@ -1,32 +1,18 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-)
-
-type AddResult struct {
-	x        int
-	y        int
-	expected int
+type scoringResult struct {
+	player1 Player
+	player2 Player
 }
 
-var AddResults = []AddResult{
-	{1, 1, 2},
-}
+/*var scoringResults = []scoringResult{
+	{Player{score: 0}, Player{score: 0},
+	{Player{score: 1}, Player{score: 0},
+}}
 
 func TestScoring(t *testing.T) {
-	game := Game{Player{name: "DelPotro"},
-		Player{name: "Djokovic"}}
 
-	scoring(&game.player1)
-	fmt.Println(game)
-	scoring(&game.player1)
-	fmt.Println(game)
-	scoring(&game.player1)
-	fmt.Println(game)
-
-}
+}*/
 
 /*func TestAdd(t *testing.T) {
 	for _, test := range AddResults {

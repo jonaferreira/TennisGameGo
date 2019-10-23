@@ -25,19 +25,27 @@ type Game struct {
 
 func (game *Game) isThereWinner() bool {
 	return !(game.player1.winner == true || game.player2.winner == true)
-
 }
 
 func scoring(playerWin *Player, playerLose *Player) {
+	fmt.Println("Gool!!.. Point to", playerWin.name)
 	if playerWin.score < 2 {
 		playerWin.score++
 	} else if playerWin.advantage == false && playerLose.advantage == false {
+		if playerLose.score < 3 {
+			fmt.Println("Math Point to", playerWin.name)
+		} else {
+			fmt.Println("Advantage to", playerWin.name, ".. Match Point!!!")
+		}
+		playerWin.score = 3
 		playerWin.advantage = true
 	} else if playerWin.advantage == true && playerLose.advantage == false {
 		fmt.Println("Winner is", playerWin.name)
 		playerWin.winner = true
 	} else if playerWin.advantage == false && playerLose.advantage == true {
 		fmt.Println("Deuse!!!")
+		playerWin.score = 3
+		playerLose.score = 3
 		playerLose.advantage = false
 	}
 }
@@ -51,6 +59,7 @@ func (game *Game) wonPoint() {
 }
 
 func (game *Game) round() bool {
+	fmt.Println(game.player1, " | ", game.player2)
 	game.wonPoint()
 	return game.isThereWinner()
 }
@@ -61,10 +70,11 @@ func main() {
 	game := Game{Player{name: "DelPotro"},
 		Player{name: "Djokovic"}}
 
+	fmt.Println("Really!!... Go!!")
+
 	continues := true
 	for continues {
 		continues = game.round()
-		fmt.Println(game.player1, " - ", game.player2)
 	}
 }
 
