@@ -96,20 +96,36 @@ func (game *Game) wonPoint() {
 	}
 }
 
-func (game *Game) playGame() {
+func (game *Game) playing() bool {
 	continues := true
 	turn := 1
 	for continues {
 		turn = turn % 2
 		turn++
-		//game.player1
+		if turn == 1 {
+			if rand.Float64() < 0.5 {
+				fmt.Println(game.player1.getName(), "can't return the ball")
+				scoring(&game.player2, &game.player1)
+				fmt.Println(game.player1, " | ", game.player2)
+			} else {
+				fmt.Println(game.player1.getName(), "had returned the ball")
+			}
+		} else {
+			if rand.Float64() < 0.5 {
+				fmt.Println(game.player2.getName(), "can't return the ball")
+				scoring(&game.player1, &game.player2)
+				fmt.Println(game.player1, " | ", game.player2)
+			} else {
+				fmt.Println(game.player2.getName(), "had returned the ball!!")
+			}
+		}
+		continues = game.isThereWinner()
 	}
+	return continues
 }
 
 func (game *Game) round() bool {
-	fmt.Println(game.player1, " | ", game.player2)
-	game.wonPoint()
-	return game.isThereWinner()
+	return game.playing()
 }
 
 func main() {
