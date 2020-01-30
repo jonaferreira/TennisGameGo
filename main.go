@@ -103,6 +103,7 @@ func (game *Game) playing() bool {
 		turn = turn % 2
 		turn++
 		if turn == 1 {
+			fmt.Println(game.player1.getName(), "is going to the ball... anndd...")
 			if rand.Float64() < 0.5 {
 				fmt.Println(game.player1.getName(), "can't return the ball")
 				scoring(&game.player2, &game.player1)
@@ -111,6 +112,7 @@ func (game *Game) playing() bool {
 				fmt.Println(game.player1.getName(), "had returned the ball")
 			}
 		} else {
+			fmt.Println(game.player2.getName(), "is going to the ball... anndd...")
 			if rand.Float64() < 0.5 {
 				fmt.Println(game.player2.getName(), "can't return the ball")
 				scoring(&game.player1, &game.player2)
@@ -125,6 +127,7 @@ func (game *Game) playing() bool {
 }
 
 func (game *Game) round() bool {
+	fmt.Println("Start new round!!...")
 	return game.playing()
 }
 
