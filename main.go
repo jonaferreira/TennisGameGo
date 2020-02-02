@@ -55,6 +55,18 @@ func (player *Player) setWinner(winner bool) {
 	player.winner = winner
 }
 
+func (player *Player) triesReturnBall() bool {
+	fmt.Println(player.getName(), "is going to the ball... and...")
+
+	if rand.Float64() < 0.5 {
+		fmt.Println(player.getName(), "can't return the ball")
+		return false
+	} else {
+		fmt.Println(player.getName(), "had returned the ball")
+		return true
+	}
+}
+
 // Game is ....
 type Game struct {
 	player1 Player
@@ -103,22 +115,16 @@ func (game *Game) playing() bool {
 		turn = turn % 2
 		turn++
 		if turn == 1 {
-			fmt.Println(game.player1.getName(), "is going to the ball... and...")
-			if rand.Float64() < 0.5 {
-				fmt.Println(game.player1.getName(), "can't return the ball")
+			playerCanTryReturnBall := game.player1.triesReturnBall()
+			if !playerCanTryReturnBall {
 				scoring(&game.player2, &game.player1)
 				fmt.Println(game.player1, " | ", game.player2)
-			} else {
-				fmt.Println(game.player1.getName(), "had returned the ball")
 			}
 		} else {
-			fmt.Println(game.player2.getName(), "is going to the ball... and...")
-			if rand.Float64() < 0.5 {
-				fmt.Println(game.player2.getName(), "can't return the ball")
+			playerCanTryReturnBall := game.player2.triesReturnBall()
+			if !playerCanTryReturnBall {
 				scoring(&game.player1, &game.player2)
 				fmt.Println(game.player1, " | ", game.player2)
-			} else {
-				fmt.Println(game.player2.getName(), "had returned the ball!!")
 			}
 		}
 		continues = game.isThereWinner()
