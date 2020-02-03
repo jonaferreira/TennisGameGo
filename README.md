@@ -1,6 +1,6 @@
 # TennisGameGo
 
-It is a Go project what simulate a game of tennis. It has builded with go. 
+It is a Go project what simulate a game of tennis. It has builded with go.
 
 ## Installation
 
