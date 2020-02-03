@@ -15,16 +15,20 @@ type Player struct {
 	score     int
 	winner    bool
 	advantage bool
+	service   bool
 }
 
+// PlayerInterface is ...
 type PlayerInterface interface {
 	getName() string
 	getScore() int
 	hasAdvantage() bool
+	hasService() bool
 	winScore()
 	setScore(score int)
 	setAdvantage(advantage bool)
 	setWinner(winner bool)
+	setService(service bool)
 }
 
 func (player *Player) getName() string {
@@ -37,6 +41,10 @@ func (player *Player) getScore() int {
 
 func (player *Player) hasAdvantage() bool {
 	return player.advantage
+}
+
+func (player *Player) hasService() bool {
+	return player.service
 }
 
 func (player *Player) winScore() {
@@ -53,6 +61,10 @@ func (player *Player) setAdvantage(advantage bool) {
 
 func (player *Player) setWinner(winner bool) {
 	player.winner = winner
+}
+
+func (player *Player) setService(service bool) {
+	player.service = service
 }
 
 func (player *Player) triesReturnBall() bool {
@@ -110,21 +122,38 @@ func (game *Game) wonPoint() {
 
 func (game *Game) playing() bool {
 	continues := true
+
+	game.player1.setService(true)
 	turn := 1
+
 	for continues {
-		turn = turn % 2
-		turn++
+		// Corregir ... el saque es siempre del mismo que comienza..
+		if game.player1.hasService() {
+			fmt.Println(game.player1.getName(), " is serving...")
+			turn = 0
+			game.player1.setService(false)
+		} else if game.player2.hasService() {
+			fmt.Println(game.player2.getName(), " is serving...")
+			turn = 1
+			game.player2.setService(false)
+		} else {
+			turn = turn % 2
+			turn++
+		}
+
 		if turn == 1 {
 			playerCanTryReturnBall := game.player1.triesReturnBall()
 			if !playerCanTryReturnBall {
 				scoring(&game.player2, &game.player1)
 				fmt.Println(game.player1, " | ", game.player2)
+				game.player2.setService(true)
 			}
 		} else {
 			playerCanTryReturnBall := game.player2.triesReturnBall()
 			if !playerCanTryReturnBall {
 				scoring(&game.player1, &game.player2)
 				fmt.Println(game.player1, " | ", game.player2)
+				game.player1.setService(true)
 			}
 		}
 		continues = game.isThereWinner()
