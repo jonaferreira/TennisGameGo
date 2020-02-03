@@ -15,16 +15,20 @@ type Player struct {
 	score     int
 	winner    bool
 	advantage bool
+	service   bool
 }
 
+// PlayerInterface is ...
 type PlayerInterface interface {
 	getName() string
 	getScore() int
 	hasAdvantage() bool
+	hasService() bool
 	winScore()
 	setScore(score int)
 	setAdvantage(advantage bool)
 	setWinner(winner bool)
+	setService(service bool)
 }
 
 func (player *Player) getName() string {
@@ -37,6 +41,10 @@ func (player *Player) getScore() int {
 
 func (player *Player) hasAdvantage() bool {
 	return player.advantage
+}
+
+func (player *Player) hasService() bool {
+	return player.service
 }
 
 func (player *Player) winScore() {
@@ -55,6 +63,22 @@ func (player *Player) setWinner(winner bool) {
 	player.winner = winner
 }
 
+func (player *Player) setService(service bool) {
+	player.service = service
+}
+
+func (player *Player) triesReturnBall() bool {
+	fmt.Println(player.getName(), "is going to the ball... and...")
+
+	if rand.Float64() < 0.5 {
+		fmt.Println(player.getName(), "can't return the ball")
+		return false
+	} else {
+		fmt.Println(player.getName(), "had returned the ball")
+		return true
+	}
+}
+
 // Game is ....
 type Game struct {
 	player1 Player
@@ -63,6 +87,21 @@ type Game struct {
 
 func (game *Game) isThereWinner() bool {
 	return !(game.player1.winner == true || game.player2.winner == true)
+}
+
+func (game *Game) calculateService(turn int) int {
+
+	if game.player1.hasService() {
+		fmt.Println(game.player1.getName(), " is serving...")
+		turn = 0
+		game.player1.setService(false)
+	} else {
+		turn = turn % 2
+		turn++
+	}
+
+	return turn
+
 }
 
 func scoring(playerWin PlayerInterface, playerLose PlayerInterface) {
@@ -88,28 +127,39 @@ func scoring(playerWin PlayerInterface, playerLose PlayerInterface) {
 	}
 }
 
-func (game *Game) wonPoint() {
-	if rand.Float64() < 0.5 {
-		scoring(&game.player1, &game.player2)
-	} else {
-		scoring(&game.player2, &game.player1)
-	}
-}
-
-func (game *Game) playGame() {
+func (game *Game) playing() bool {
 	continues := true
+
+	game.player1.setService(true)
 	turn := 1
+
 	for continues {
-		turn = turn % 2
-		turn++
-		//game.player1
+
+		turn = game.calculateService(turn)
+
+		if turn == 1 {
+			playerCanTryReturnBall := game.player1.triesReturnBall()
+			if !playerCanTryReturnBall {
+				scoring(&game.player2, &game.player1)
+				fmt.Println(game.player1, " | ", game.player2)
+				game.player1.setService(true)
+			}
+		} else {
+			playerCanTryReturnBall := game.player2.triesReturnBall()
+			if !playerCanTryReturnBall {
+				scoring(&game.player1, &game.player2)
+				fmt.Println(game.player1, " | ", game.player2)
+				game.player1.setService(true)
+			}
+		}
+		continues = game.isThereWinner()
 	}
+	return continues
 }
 
 func (game *Game) round() bool {
-	fmt.Println(game.player1, " | ", game.player2)
-	game.wonPoint()
-	return game.isThereWinner()
+	fmt.Println("Start new round!!...")
+	return game.playing()
 }
 
 func main() {
