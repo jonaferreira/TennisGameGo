@@ -73,10 +73,10 @@ func (player *Player) triesReturnBall() bool {
 	if rand.Float64() < 0.5 {
 		fmt.Println(player.getName(), "can't return the ball")
 		return false
-	} else {
-		fmt.Println(player.getName(), "had returned the ball")
-		return true
 	}
+
+	fmt.Println(player.getName(), "had returned the ball")
+	return true
 }
 
 // Game is ....
