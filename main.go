@@ -127,14 +127,6 @@ func scoring(playerWin PlayerInterface, playerLose PlayerInterface) {
 	}
 }
 
-func (game *Game) wonPoint() {
-	if rand.Float64() < 0.5 {
-		scoring(&game.player1, &game.player2)
-	} else {
-		scoring(&game.player2, &game.player1)
-	}
-}
-
 func (game *Game) playing() bool {
 	continues := true
 
