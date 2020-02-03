@@ -6,6 +6,23 @@ import (
 	"time"
 )
 
+type statesScoring struct {
+	Point           int
+	MatchPoint      int
+	AdvantangePoint int
+	WinnerPoint     int
+	DeusePoint      int
+}
+
+// EnumStatesScoring for public use
+var EnumStatesScoring = &statesScoring{
+	Point:           0,
+	MatchPoint:      1,
+	AdvantangePoint: 2,
+	WinnerPoint:     3,
+	DeusePoint:      4,
+}
+
 // Points is ...
 var Points = [4]int{0, 15, 30, 40}
 
@@ -104,26 +121,44 @@ func (game *Game) calculateService(turn int) int {
 
 }
 
-func scoring(playerWin PlayerInterface, playerLose PlayerInterface) {
-	fmt.Println("Gool!!.. Point to", playerWin.getName())
+func scoring(playerWin PlayerInterface, playerLose PlayerInterface) int {
+	state := EnumStatesScoring.Point
+
 	if playerWin.getScore() < 2 {
 		playerWin.winScore()
 	} else if playerWin.hasAdvantage() == false && playerLose.hasAdvantage() == false {
 		if playerLose.getScore() < 3 {
-			fmt.Println("Math Point to", playerWin.getName())
+			state = EnumStatesScoring.MatchPoint
 		} else {
-			fmt.Println("Advantage to", playerWin.getName(), ".. Match Point!!!")
+			state = EnumStatesScoring.AdvantangePoint
 		}
 		playerWin.setScore(3)
 		playerWin.setAdvantage(true)
 	} else if playerWin.hasAdvantage() == true && playerLose.hasAdvantage() == false {
-		fmt.Println("Winner is", playerWin.getName())
+		state = EnumStatesScoring.WinnerPoint
 		playerWin.setWinner(true)
 	} else if playerWin.hasAdvantage() == false && playerLose.hasAdvantage() == true {
-		fmt.Println("Deuse!!!")
+		state = EnumStatesScoring.DeusePoint
 		playerWin.setScore(3)
 		playerLose.setScore(3)
 		playerLose.setAdvantage(false)
+	}
+
+	return state
+}
+
+func printJudgeSays(state int, playerName string) {
+	fmt.Println("Gool!!.. Point to", playerName)
+
+	switch state {
+	case EnumStatesScoring.MatchPoint:
+		fmt.Println("Math Point to", playerName)
+	case EnumStatesScoring.AdvantangePoint:
+		fmt.Println("Advantage to", playerName, ".. Match Point!!!")
+	case EnumStatesScoring.WinnerPoint:
+		fmt.Println("Winner is", playerName)
+	case EnumStatesScoring.DeusePoint:
+		fmt.Println("Deuse!!!")
 	}
 }
 
@@ -138,16 +173,16 @@ func (game *Game) playing() bool {
 		turn = game.calculateService(turn)
 
 		if turn == 1 {
-			playerCanTryReturnBall := game.player1.triesReturnBall()
-			if !playerCanTryReturnBall {
-				scoring(&game.player2, &game.player1)
+			if !game.player1.triesReturnBall() {
+				state := scoring(&game.player2, &game.player1)
+				printJudgeSays(state, game.player2.getName())
 				fmt.Println(game.player1, " | ", game.player2)
 				game.player1.setService(true)
 			}
 		} else {
-			playerCanTryReturnBall := game.player2.triesReturnBall()
-			if !playerCanTryReturnBall {
-				scoring(&game.player1, &game.player2)
+			if !game.player2.triesReturnBall() {
+				state := scoring(&game.player1, &game.player2)
+				printJudgeSays(state, game.player1.getName())
 				fmt.Println(game.player1, " | ", game.player2)
 				game.player1.setService(true)
 			}

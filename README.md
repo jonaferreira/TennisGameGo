@@ -5,6 +5,13 @@ It is a Go project what simulate a game of tennis. It has builded with go.
 ```bash
 go build main.go
 ```
+
+## Run
 ```bash
-go main.exe
+main.exe
+```
+
+## Coverage
+```bash
+go test -coverprofile=cover.out
 ```
