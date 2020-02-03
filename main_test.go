@@ -1,33 +1,33 @@
 package main
 
-type scoringResult struct {
-	playerIn1  Player
-	playerIn2  Player
-	playerOut1 Player
-	playerOut2 Player
-}
+import (
+	"testing"
+)
 
-var scoringResults = []scoringResult{
-	{Player{score: 0}, Player{score: 0}, Player{score: 1}, Player{score: 0}},
-	{Player{score: 1}, Player{score: 0}, Player{score: 2}, Player{score: 0}},
-	{Player{score: 2}, Player{score: 0}, Player{score: 3}, Player{score: 0}},
-	{Player{score: 3}, Player{score: 0}, Player{score: 4}, Player{score: 0}},
-	{Player{score: 3}, Player{score: 0}, Player{score: 3}, Player{score: 1}},
-	{Player{score: 3}, Player{score: 1}, Player{score: 3}, Player{score: 2}},
-	{Player{score: 3}, Player{score: 2}, Player{score: 3}, Player{score: 3}},
-	{Player{score: 3}, Player{score: 3}, Player{score: 3, advantage: true}, Player{score: 3, advantage: false}},
-}
+func TestScoringSimpleOk(t *testing.T) {
 
-/*
-func TestScoring(t *testing.T) {
+	player1 := Player{}
+	player2 := Player{}
 
-}*/
+	player1Expect := Player{score: 1}
 
-/*func TestAdd(t *testing.T) {
-	for _, test := range AddResults {
-		result := Add(test.x, test.y)
-		if result != test.expected {
-			t.Fatal("Expected Result Not Given")
-		}
+	scoring(&player1, &player2)
+
+	if player1.getScore() != player1Expect.getScore() {
+		t.Fatal("Expected Result Not Given")
 	}
-}*/
+}
+
+func TestScoringMatchPoint(t *testing.T) {
+
+	player1 := Player{score: 3}
+	player2 := Player{score: 3}
+
+	player1Expect := Player{advantage: true}
+
+	scoring(&player1, &player2)
+
+	if player1.hasAdvantage() != player1Expect.hasAdvantage() {
+		t.Fatal("Expected Result Not Given")
+	}
+}
