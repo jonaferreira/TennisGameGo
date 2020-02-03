@@ -89,6 +89,21 @@ func (game *Game) isThereWinner() bool {
 	return !(game.player1.winner == true || game.player2.winner == true)
 }
 
+func (game *Game) calculateService(turn int) int {
+
+	if game.player1.hasService() {
+		fmt.Println(game.player1.getName(), " is serving...")
+		turn = 0
+		game.player1.setService(false)
+	} else {
+		turn = turn % 2
+		turn++
+	}
+
+	return turn
+
+}
+
 func scoring(playerWin PlayerInterface, playerLose PlayerInterface) {
 	fmt.Println("Gool!!.. Point to", playerWin.getName())
 	if playerWin.getScore() < 2 {
@@ -127,26 +142,15 @@ func (game *Game) playing() bool {
 	turn := 1
 
 	for continues {
-		// Corregir ... el saque es siempre del mismo que comienza..
-		if game.player1.hasService() {
-			fmt.Println(game.player1.getName(), " is serving...")
-			turn = 0
-			game.player1.setService(false)
-		} else if game.player2.hasService() {
-			fmt.Println(game.player2.getName(), " is serving...")
-			turn = 1
-			game.player2.setService(false)
-		} else {
-			turn = turn % 2
-			turn++
-		}
+
+		turn = game.calculateService(turn)
 
 		if turn == 1 {
 			playerCanTryReturnBall := game.player1.triesReturnBall()
 			if !playerCanTryReturnBall {
 				scoring(&game.player2, &game.player1)
 				fmt.Println(game.player1, " | ", game.player2)
-				game.player2.setService(true)
+				game.player1.setService(true)
 			}
 		} else {
 			playerCanTryReturnBall := game.player2.triesReturnBall()
